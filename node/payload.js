@@ -26,7 +26,7 @@ socket.on('update', function(msg){
 	$('#update').text(msg);
 });
 
-socket.on('alert', function(){
+socket.on('alarm', function(){
 	if (!$('#alarmframe')[0]) {
 		$('body').append('<iframe id="alarmframe" style="display:none" src="https://www.youtube.com/embed/IIypdzgZAaI?autoplay=1"></iframe>');
 		$('.thebutton-form').css("background-color","red");
