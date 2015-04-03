@@ -81,7 +81,7 @@ button_client.on('message', function(msg) {
     defcon = 5;
     alerted = {};
   }
-  if ((time_left >= 30 && time_left < 40) || Math.random() < 0.1) {
+  if ((time_left >= 30 && time_left < 40) || Math.random() < 0.02) {
     if (defcon == 5) {
       alarm_knights(1);
     }

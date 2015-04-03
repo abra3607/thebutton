@@ -1,17 +1,17 @@
 # ButtonSquire
 
-This is a Chrome [extension](https://chrome.google.com/webstore/detail/the-squire/mehjgfidikjedfdjfhkbnapnhemedfid) 
+This is a Chrome [extension](https://chrome.google.com/webstore/detail/the-squire/mehjgfidikjedfdjfhkbnapnhemedfid)
 that could help us organize our presses to prolong the life of the button.
 
 ## Motivation
 
 There are two problems with proposed methods:
 
-* Human factor. People are very suboptimal. They have flair bias that may influence their decisions, 
+* Human factor. People are very suboptimal. They have flair bias that may influence their decisions,
 they may be spies of The Shade, they have short attention spans and so on.
 
-* Network delays. I think it is very dangerous to assign more than one person to any time period 
-(two people press at the same time => a press is wasted) and it is not possible to assign any time period longer than
+* Network delays. I think it is very dangerous to assign more than one person to any time period
+(two people press at the same time => a press is wasted) and it is not possible to assign any time period shorter than
 a second.
 
 ## Solution
