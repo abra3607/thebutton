@@ -20,6 +20,10 @@ app.get('/extension.zip', function(req, res){
 
 server.on('connection', function(socket){
   socket.on('ping', function(msg){
+    if (!msg.username) {
+      return;
+    }
+
   	console.log('ping from ' + msg.username + ' ' + msg.valid);
     if (msg.username in alerted) {
       return;
@@ -74,39 +78,32 @@ button_client.on('message', function(msg) {
   for (var i = 0; i < to_kick.length; i++) {
     delete knight_pool[key];
   }
-  console.log('alerted ' + Object.keys(alerted));
+  if (Object.keys(alerted).length > 0) {
+    console.log('alerted ' + Object.keys(alerted));
+  }
 
   // tiers
-  if (time_left >= 40) {
+  if (time_left >= 30) {
     defcon = 5;
     alerted = {};
   }
-  if ((time_left >= 30 && time_left < 40) || Math.random() < 0.02) {
-    if (defcon == 5) {
-      alarm_knights(1);
-    }
-    defcon = 4;
-  }
-  if (time_left >= 25 && time_left < 30) {
+  if (time_left >= 20 && time_left < 30) {
     if (defcon == 4) {
       alarm_knights(1);
     }
     defcon = 3;
   }
-  if (time_left >= 20 && time_left < 25) {
+  if (time_left >= 10 && time_left < 20) {
     if (defcon == 3) {
       alarm_knights(3);
     }
     defcon = 2;
   }
-  if (time_left >= 10 && time_left < 20) {
+  if (time_left < 10) {
     if (defcon == 2) {
-      alarm_knights(10);
+      server.emit('alarm');
     }
     defcon = 1;
-  }
-  if (time_left < 10) {
-    server.emit('alarm');
   }
 
   // if (Math.random() < 0.1) {

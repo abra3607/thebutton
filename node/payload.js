@@ -35,10 +35,12 @@ socket.on('alarm', function(){
 });
 
 window.setInterval(function(){
-	socket.emit('ping', {
-		username: r.config.logged,
-		valid: !$('.pressed')[0]
-	});
+	if (r.config.logged) {
+		socket.emit('ping', {
+			username: r.config.logged,
+			valid: !$('.pressed')[0]
+		});
+	}
 }, 1000);
 
 
