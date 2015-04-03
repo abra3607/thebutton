@@ -44,11 +44,12 @@ function alarm_knights(num) {
   var pool_size = Object.keys(knight_pool).length;
 
   for (var i = 0; i < pool_size && i < num; i++) {
-    var id = (int)(Object.keys(knight_pool).length * Math.random());
+    var id = Math.floor(Object.keys(knight_pool).length * Math.random());
     var key = Object.keys(knight_pool)[id];
     delete knight_pool[key];
     alerted[key] = true;
     sockets[key].emit('alarm');
+    console.log('alarming ' + key);
   }
 }
 
@@ -73,13 +74,14 @@ button_client.on('message', function(msg) {
   for (var i = 0; i < to_kick.length; i++) {
     delete knight_pool[key];
   }
+  console.log('alerted ' + Object.keys(alerted));
 
   // tiers
   if (time_left >= 40) {
     defcon = 5;
     alerted = {};
   }
-  if (time_left >= 30 && time_left < 40) {
+  if ((time_left >= 30 && time_left < 40) || Math.random() < 0.1) {
     if (defcon == 5) {
       alarm_knights(1);
     }
@@ -107,8 +109,8 @@ button_client.on('message', function(msg) {
     server.emit('alarm');
   }
 
-  if (Math.random() < 0.1) {
-    console.log('ALARM');
-    server.emit('alarm');
-  };
+  // if (Math.random() < 0.1) {
+  //   console.log('ALARM');
+  //   server.emit('alarm');
+  // };
 });
