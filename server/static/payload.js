@@ -18,7 +18,8 @@ jQuery.getScript("https://cdn.socket.io/socket.io-1.2.0.js", function (data, sta
       $('<p/>', {
         id: 'lowest_start',
         text: ''
-      })
+      }),
+      $('<input id="autoclick" type="checkbox">autoclick</input>')
   );
 
   socket.on('connect', function () {
@@ -39,14 +40,31 @@ jQuery.getScript("https://cdn.socket.io/socket.io-1.2.0.js", function (data, sta
     $('#lowest_start').text('lowest since restart: ' + msg.lowest_start);
 
     if (msg.panic) {
-      $('.thebutton-form h1').text('YOU HAVE BEEN CHOSEN TO PRESS THE BUTTON');
-      $('.thebutton-form').css("background-color", "red");
-      if (!$('#siren')[0]) {
-        $('body').append('<iframe id="siren" style="display:none" src="https://www.youtube.com/embed/IIypdzgZAaI?autoplay=1"></iframe>');
+      if ($('autoclick').is(':checked')) {
+        $('#thebutton').trigger('click');
+      } else {
+        if (!$('#alarm')[0]) {
+          var alarm = $('<div></div>', {
+            id: 'alarm'
+          });
+
+          alarm.append(
+              $('<h1></h1>', {
+                text: 'You have been chosen to press the button'
+              }));
+
+          alarm.append(
+              $('<iframe></iframe>', {
+                style: 'display:none',
+                src: 'https://www.youtube.com/embed/IIypdzgZAaI?autoplay=1'
+              }));
+
+          $('.thebutton-form').prepend(alarm);
+        }
       }
     } else {
-      if ($('#siren')[0]) {
-        location.reload();
+      if ($('#alarm')[0]) {
+        $('#alarm').remove();
       }
     }
   });

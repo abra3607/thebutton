@@ -1,0 +1,90 @@
+<!DOCTYPE html>
+<html>
+<head lang="en">
+    <meta charset="UTF-8">
+    <title></title>
+</head>
+<body>
+<p>
+    Status: <b id="status"></b>
+</p>
+
+<p>
+    Timer: <b id="timer"></b> sec
+</p>
+
+<p>
+    Knights online: <b id="pool_size"></b>
+</p>
+
+<p>
+    Lowest in 1 min: <b id="lowest_period"></b>
+</p>
+
+<p>
+    Lowest since server restart: <b id="lowest_start"></b>
+</p>
+
+<script type="text/javascript" src="//code.jquery.com/jquery-1.11.2.min.js"></script>
+<script type="text/javascript" src="https://cdn.socket.io/socket.io-1.2.0.js"></script>
+<script src='https://redditjs.com/subreddit.js' data-subreddit="thebutton"></script>
+<script type="text/javascript">
+    var socket = io("https://abra.me:8443/");
+
+    socket.on('connect', function () {
+        $('#status').text('online');
+    });
+
+    socket.on('disconnect', function () {
+        $('#status').text('offline');
+    });
+
+    socket.on('reload', function () {
+        location.reload();
+    });
+
+    socket.on('update', function (msg) {
+        $('#timer').text(msg.time_left);
+        $('#pool_size').text(msg.pool_size);
+        $('#lowest_period').text(msg.lowest_period);
+        $('#lowest_start').text(msg.lowest_start);
+
+        if (msg.panic) {
+            if (!$('#alarm')[0]) {
+                var alarm = $('<div></div>', {
+                    id: 'alarm'
+                });
+
+                alarm.append(
+                        $('<h1></h1>', {
+                            text: 'You have been chosen to press the button'
+                        }));
+
+                alarm.append(
+                        $('<iframe></iframe>', {
+                            style: 'display:none',
+                            src: 'https://www.youtube.com/embed/IIypdzgZAaI?autoplay=1'
+                        }));
+
+                $('body').prepend(alarm);
+            }
+        } else {
+            if ($('#alarm')[0]) {
+                $('#alarm').remove();
+            }
+        }
+    });
+
+    socket.on('alert', function () {
+        window.open('http://reddit.com/r/thebutton', '_blank');
+    });
+
+    window.setInterval(function () {
+        socket.emit('ping', {
+            username: 'testo',
+            valid: true
+        });
+    }, 1000);
+</script>
+</body>
+</html>

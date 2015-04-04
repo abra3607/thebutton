@@ -16,6 +16,10 @@ httpsServer.listen(8443);
 
 app.use("/static", express.static(__dirname + '/static'));
 
+app.get('/', function(req, res){
+  res.sendFile(__dirname + '/watch.html');
+});
+
 var wsServer = require('socket.io')(httpsServer);
 
 var knight_pool = {};
@@ -34,7 +38,7 @@ function now() {
 
 wsServer.on('connection', function (socket) {
   socket.on('ping', function (msg) {
-    if (!msg.username) {
+    if (!msg.username || !msg.valid) {
       return;
     }
 
@@ -105,6 +109,7 @@ button_client.on('message', function (msg) {
     var key = keys[i];
     var obj = {
       pool_size: keys.length,
+      time_left: time_left,
       panic: false,
       lowest_period: lowest_period,
       lowest_start: lowest
@@ -140,20 +145,24 @@ function kick_idlers() {
 }
 
 function manage_tiers(time_left) {
-  if (time_left >= 30) {
+  if (time_left >= 10) {
     current_tier = 0;
     alerted = {};
   }
-  if (time_left >= 20 && time_left < 30 && current_tier == 0) {
+  if (time_left >= 8 && time_left < 10 && current_tier == 0) {
     alert_knights(1);
     current_tier = 1
   }
-  if (time_left >= 10 && time_left < 20 && current_tier == 1) {
+  if (time_left >= 5 && time_left < 8 && current_tier == 1) {
     alert_knights(3);
     current_tier = 2
   }
-  if (time_left < 10 && current_tier == 2) {
+  if (time_left >= 3 && time_left < 5 && current_tier == 2) {
+    alert_knights(5);
+    current_tier = 3
+  }
+  if (time_left < 3  && current_tier == 3) {
     alert_all();
-    current_tier = 3;
+    current_tier = 4;
   }
 }
