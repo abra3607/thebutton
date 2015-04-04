@@ -3,6 +3,8 @@
 This is a Chrome [extension](https://chrome.google.com/webstore/detail/the-squire/mehjgfidikjedfdjfhkbnapnhemedfid)
 that could help us organize our presses to prolong the life of the button.
 
+Using this extension you are guaranteed red flair.
+
 ## Motivation
 
 There are two problems with proposed methods:
