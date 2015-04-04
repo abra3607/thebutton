@@ -27,8 +27,7 @@ When it gets low, the server alerts random knights according to the tier system.
 
 ## Tier system
 
-* Timer is less than 40 sec: alert one random knight from the pool to go press the button.
-* Timer is less than 30 sec: alert one random knight.
-* Timer is less than 25 sec: alert three random knights.
-* Timer is less than 20 sec: alert ten random knights.
-* Timer is less than 10 sec: alert all the knights.
+* Timer in [8, 10): alert one random knight from the pool to go press the button.
+* Timer in [5, 8): alert three.
+* Timer in [3, 5): alert five.
+* Timer in [0, 3): alert everyone.
