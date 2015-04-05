@@ -16,8 +16,12 @@ httpsServer.listen(8443);
 
 app.use("/static", express.static(__dirname + '/static'));
 
-app.get('/', function(req, res){
-  res.sendFile(__dirname + '/watch.html');
+//app.get('/', function(req, res){
+//  res.sendFile(__dirname + '/watch.html');
+//});
+
+app.get('/get', function(req, res) {
+  res.redirect('https://chrome.google.com/webstore/detail/the-squire/mehjgfidikjedfdjfhkbnapnhemedfid');
 });
 
 var wsServer = require('socket.io')(httpsServer);
@@ -47,7 +51,7 @@ wsServer.on('connection', function (socket) {
   });
 });
 
-var button_broadcast = 'wss://wss.redditmedia.com/thebutton?h=900bb019d240dd0bbd0b44a79750b910219fe953&e=1428245050';
+var button_broadcast = "wss://wss.redditmedia.com/thebutton?h=19ad9a33871d49f318ab8d882b63c101924638d1&e=1428351836"
 var button_client = new ws(button_broadcast);
 
 function alert_knights(num) {

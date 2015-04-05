@@ -9,18 +9,19 @@ jQuery.getScript("https://cdn.socket.io/socket.io-1.2.0.js", function (data, sta
       }),
       $('<p/>', {
         id: 'pool_size',
-        text: ''
+        text: '?'
       }),
       $('<p/>', {
         id: 'lowest_period',
-        text: ''
+        text: '?'
       }),
       $('<p/>', {
         id: 'lowest_start',
-        text: ''
+        text: '?'
       }),
       $('<input id="autoclick" type="checkbox">autoclick</input>')
   );
+  $('.thebutton-form').after('<div><img src="http://abra.me:8080/static/plot.png"></div>');
 
   socket.on('connect', function () {
     $('#status').text('status: online');
@@ -35,6 +36,7 @@ jQuery.getScript("https://cdn.socket.io/socket.io-1.2.0.js", function (data, sta
   });
 
   socket.on('update', function (msg) {
+    console.log(msg);
     $('#pool_size').text('knights online: ' + msg.pool_size);
     $('#lowest_period').text('lowest 1 min: ' + msg.lowest_period);
     $('#lowest_start').text('lowest since restart: ' + msg.lowest_start);
