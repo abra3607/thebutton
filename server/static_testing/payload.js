@@ -15,9 +15,12 @@ jQuery.getScript("https://cdn.socket.io/socket.io-1.2.0.js", function (data, sta
   var first_ping = true;
 
   function click() {
-    for (var i = 0; i < 3; i++) {
-      $('#thebutton').trigger('click');
+    //comm delay
+    if (r.thebutton._msgSecondsLeft > 30) {
+      return;
     }
+
+    $('#thebutton').trigger('click');
 
     $('.thebutton-form').before(
         $('<h3>You have been ordered to autoclick</h3>').css({
@@ -112,7 +115,8 @@ jQuery.getScript("https://cdn.socket.io/socket.io-1.2.0.js", function (data, sta
                 'transform': 'translateY(-50%)'
               }).append(
                   $('<p/>').append($('<h3/>').html('The Squire')),
-                  $('<p><a href="http://bit.ly/1a7DWwk">what is it?</a></p>'),
+                  $('<p><a href="http://bit.ly/1a7DWwk" target="_blank">what is it?</a></p>'),
+                  //$('<p><a onclick="alert(\'dsa\');">what is it?</a></p>'),
                   $('<p>status: <b id="status">connecting...</b></p>'),
                   $('<p>server timer: <b id="server_timer">?</b></p>'),
                   $('<p>autoclickers: <b id="autoclickers">?</b></p>'),

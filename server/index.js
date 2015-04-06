@@ -3,8 +3,9 @@ var express = require('express');
 var http = require('http');
 var https = require('https');
 var ws = require('ws');
+var cors = require('cors');
 
-var DEBUG = false;
+var DEBUG = process.argv[2] == 'DEBUG';
 
 var app = express();
 var httpServer = http.createServer(app);
@@ -17,6 +18,8 @@ var httpsServer = https.createServer(credentials, app);
 httpsServer.listen(DEBUG ? 9443 : 8443);
 
 app.use("/static", express.static(__dirname + (DEBUG ? '/static_testing' : '/static')));
+
+app.use(cors());
 
 app.get('/get', function (req, res) {
   res.redirect('https://chrome.google.com/webstore/detail/the-squire/mehjgfidikjedfdjfhkbnapnhemedfid');

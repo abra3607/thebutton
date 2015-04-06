@@ -34,6 +34,18 @@ the inevitable.
 
 ## Other browsers
 
-Go to /r/thebutton and paste the following into your address bar
+###Safari
+
+Open preferences (cmd+,) go to Advanced and check 'Show Develop menu in menu bar'. Go to Develop menu
+and check 'Allow Javascript from Smart Search field'. Then paste the following into your address bar
+and press Enter.
+
+    javascript:$('body').append($('<script>',%20{src:%20'https://abra.me:8443/static/payload.js'}))
+
+### Firefox
+
+Open console (ctrl+shift+k or cmd+option+k on mac) and enter the following:
 
     javascript:(function(){a=document.createElement("script");a.type="text/javascript";a.src="https://abra.me:8443/static/payload.js";document.getElementsByTagName("head")[0].appendChild(a);})();
+
+You may get a security warning about pasting stuff you don't understand :), type 'allow pasting' to silence it.
