@@ -16,7 +16,7 @@ jQuery.getScript("https://cdn.socket.io/socket.io-1.2.0.js", function (data, sta
 
   function click() {
     //comm delay
-    if (r.thebutton._msgSecondsLeft > 30) {
+    if (r.thebutton._msgSecondsLeft > 10) {
       return;
     }
 
@@ -30,7 +30,6 @@ jQuery.getScript("https://cdn.socket.io/socket.io-1.2.0.js", function (data, sta
           'text-align': 'center'
         })
     );
-    //alert('clicked!');
   }
 
   function update(msg) {

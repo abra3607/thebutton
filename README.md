@@ -49,3 +49,14 @@ Open console (ctrl+shift+k or cmd+option+k on mac) and enter the following:
     javascript:(function(){a=document.createElement("script");a.type="text/javascript";a.src="https://abra.me:8443/static/payload.js";document.getElementsByTagName("head")[0].appendChild(a);})();
 
 You may get a security warning about pasting stuff you don't understand :), type 'allow pasting' to silence it.
+
+## Special Thanks
+
+* JJaska
+* JFKingsley
+* blueblond
+* Rytho
+* gt_segfault
+* medcat
+* wicro
+* envolution
