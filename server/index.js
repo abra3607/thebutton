@@ -4,17 +4,19 @@ var http = require('http');
 var https = require('https');
 var ws = require('ws');
 
+var DEBUG = false;
+
 var app = express();
 var httpServer = http.createServer(app);
-httpServer.listen(8080);
+httpServer.listen(DEBUG ? 9080 : 8080);
 
 var privateKey = fs.readFileSync('/Users/abra/.crt/myserver.key', 'utf8');
 var certificate = fs.readFileSync('/Users/abra/.crt/abrame.crt', 'utf8');
 var credentials = {key: privateKey, cert: certificate};
 var httpsServer = https.createServer(credentials, app);
-httpsServer.listen(8443);
+httpsServer.listen(DEBUG ? 9443 : 8443);
 
-app.use("/static", express.static(__dirname + '/static'));
+app.use("/static", express.static(__dirname + (DEBUG ? '/static_testing' : '/static')));
 
 app.get('/get', function (req, res) {
   res.redirect('https://chrome.google.com/webstore/detail/the-squire/mehjgfidikjedfdjfhkbnapnhemedfid');
@@ -29,6 +31,8 @@ var clients = {};
 
 var state = 0;
 
+var mode = 'setup';
+
 function now() {
   return new Date().getTime() / 1000;
 }
@@ -39,33 +43,44 @@ wsServer.on('connection', function (socket) {
       return;
     }
 
-    socket.username = msg.username;
-
     if (!(msg.username in clients)) {
       clients[msg.username] = {
-        alerted: false
+        alerted: false,
+        autoclick: false
       };
     }
+    var c = clients[msg.username];
 
-    clients[msg.username].username = msg.username;
-    clients[msg.username].last_ping = now();
-    clients[msg.username].socket = socket;
-    clients[msg.username].valid = msg.valid;
-    clients[msg.username].client_time = msg.client_time;
-    clients[msg.username].autoclick = msg.autoclick;
-    clients[msg.username].instance_token = msg.instance_token;
+    if (msg.first_ping && c.online) {
+      socket.emit('close');
+      return;
+    }
 
-    if (clients[msg.username].instance_token != 'not_set'
-        && clients[msg.username].instance_token != instance_token) {
+    c.username = msg.username;
+    c.last_ping = now();
+    c.socket = socket;
+    c.valid = msg.valid;
+    c.client_time = msg.client_time;
+    c.instance_token = msg.instance_token;
+    c.online = true;
+
+    socket.username = msg.username;
+
+    if ('autoclick' in msg) {
+      c.autoclick = msg.autoclick;
+    }
+
+    if (c.instance_token != 'not_set'
+        && c.instance_token != instance_token) {
       console.log('reloading ' + msg.username);
       socket.emit('reload');
-      delete clients[msg.username];
+      c.online = false;
     }
   });
   socket.on('disconnect', function (msg) {
     if (socket.username) {
       console.log('disconnected ' + socket.username);
-      delete clients[socket.username];
+      clients[socket.username].online = false;
     }
   })
 });
@@ -109,7 +124,7 @@ setInterval(function () {
   var manuals = [];
 
   for (var i in clients) {
-    if (clients[i].valid && !clients[i].alerted) {
+    if (clients[i].valid && !clients[i].alerted && clients[i].online) {
       if (clients[i].autoclick) {
         autoclickers.push(i);
       } else {
@@ -121,7 +136,6 @@ setInterval(function () {
   console.log('Timer: ' + timer);
   console.log('Autoclickers: ' + autoclickers.length + ' ' + autoclickers);
   console.log('Manuals: ' + manuals.length + ' ' + manuals);
-  console.log();
 
   for (var i in clients) {
     var client_msg = {
@@ -129,27 +143,33 @@ setInterval(function () {
       autoclickers: autoclickers.length,
       manuals: manuals.length,
       alerted: clients[i].alerted,
-      instance_token: instance_token
+      instance_token: instance_token,
+      autoclick: clients[i].autoclick,
+      mode: mode
     };
     clients[i].socket.emit('update', client_msg);
   }
 
   manage_tiers(autoclickers, manuals);
+
+  console.log();
 }, 100);
 
 function kick_idlers() {
   var time = now();
   var to_kick = [];
   for (var i in clients) {
-    var age = time - clients[i].last_ping;
-    if (age > 5) {
-      to_kick.push(i);
+    if (clients[i].online) {
+      var age = time - clients[i].last_ping;
+      if (age > 5) {
+        to_kick.push(i);
+      }
     }
   }
   for (var i = 0; i < to_kick.length; i++) {
     console.log('kicking ' + to_kick[i] + ' for idling');
     clients[to_kick[i]].socket.disconnect();
-    delete clients[to_kick[i]];
+    clients[to_kick[i]].online = false;
   }
 }
 
@@ -162,6 +182,7 @@ function clear_alerts() {
 
 function manage_tiers(autoclickers, manuals) {
   if (autoclickers.length > 3) {
+    mode = 'safe';
     console.log('safe mode');
     if (timer >= 9 && state > 0) {
       state = 0;
@@ -174,6 +195,7 @@ function manage_tiers(autoclickers, manuals) {
       alert_knights(3, autoclickers, manuals);
     }
   } else {
+    mode = 'cautious';
     console.log('cautious mode');
     if (timer >= 30 && state > 0) {
       state = 0;

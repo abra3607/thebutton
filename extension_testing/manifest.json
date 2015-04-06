@@ -1,0 +1,21 @@
+{
+  "name": "The Squire [DEBUG]",
+  "version": "0.0.2",
+  "manifest_version": 2,
+  "description": "Help a knight to do his job",
+  "permissions": [
+    "http://www.reddit.com/r/thebutton/",
+    "https://www.reddit.com/r/thebutton/"
+  ],
+  "content_scripts": [
+    {
+      "matches": [
+        "http://www.reddit.com/r/thebutton/*",
+        "https://www.reddit.com/r/thebutton/*"
+      ],
+      "js": [
+        "inject.js"
+      ]
+    }
+  ]
+}

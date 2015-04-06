@@ -4,7 +4,7 @@ jQuery.getScript("https://cdn.socket.io/socket.io-1.2.0.js", function (data, sta
     throw new Error("Not on the button page");
   }
 
-  var socket = io("https://abra.me:8443/");
+  var socket = io("https://abra.me:9443/");
 
   function now() {
     return new Date().getTime() / 1000;
@@ -15,7 +15,9 @@ jQuery.getScript("https://cdn.socket.io/socket.io-1.2.0.js", function (data, sta
   var first_ping = true;
 
   function click() {
-    $('#thebutton').trigger('click');
+    for (var i = 0; i < 3; i++) {
+      $('#thebutton').trigger('click');
+    }
 
     $('.thebutton-form').before(
         $('<h3>You have been ordered to autoclick</h3>').css({
@@ -25,6 +27,7 @@ jQuery.getScript("https://cdn.socket.io/socket.io-1.2.0.js", function (data, sta
           'text-align': 'center'
         })
     );
+    //alert('clicked!');
   }
 
   function update(msg) {
