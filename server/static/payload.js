@@ -108,7 +108,7 @@ jQuery.getScript("https://cdn.socket.io/socket.io-1.2.0.js", function (data, sta
   // failsafe
   window.setTimeout(function () {
     window.setInterval(function () {
-      if (r.thebutton._msgSecondsLeft < 3) {
+      if (r.thebutton._msgSecondsLeft < 3 && $('#autoclick').is(':checked')) {
         click();
       }
     }, 1000);
