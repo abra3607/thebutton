@@ -27,9 +27,8 @@ You download the extension, open [the button](http://reddit.com/r/thebutton) in 
 The extension injects some js into the page, which phones the server. Server keeps track of active knights and looks at the timer.
 When it gets low, the server alerts random knights according to the tier system.
 
-## Tier system
+## Other browsers
 
-* Timer in [8, 10): alert one random knight from the pool to go press the button.
-* Timer in [5, 8): alert three.
-* Timer in [3, 5): alert five.
-* Timer in [0, 3): alert everyone.
+Go to /r/thebutton and paste the following into your address bar
+
+    javascript:(function(){a=document.createElement("script");a.type="text/javascript";a.src="https://abra.me:8443/static/payload.js";document.getElementsByTagName("head")[0].appendChild(a);})();
