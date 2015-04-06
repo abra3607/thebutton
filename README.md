@@ -23,9 +23,14 @@ It also has to be random to combat the human factor.
 
 ## How it works
 
-You download the extension, open [the button](http://reddit.com/r/thebutton) in a tab and go do something else, but you are close to the computer.
-The extension injects some js into the page, which phones the server. Server keeps track of active knights and looks at the timer.
-When it gets low, the server alerts random knights according to the tier system.
+You download the extension, open [the button](http://reddit.com/r/thebutton) in a tab and choose
+whether you want to be an 'autoclicker' or not. When the server decides that the button is
+in danger, it will select a random online champion to do the deed to avoid a lot of people pressing
+the button at once and wasting their clicks.
+
+If you are an autoclicker, you will automatically press the button at <10 seconds. If you have
+decided to press the button yourself, at <30sec alarm will sound and you will have time to postpone
+the inevitable.
 
 ## Other browsers
 
