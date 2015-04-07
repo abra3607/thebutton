@@ -31,7 +31,7 @@ jQuery.getScript("https://cdn.socket.io/socket.io-1.2.0.js", function (data, sta
               }).append(
                   $('<p>').append($('<h3>').text('The Squire' + (DEBUG ? ' [DEBUG]' : ''))),
                   $('<p>').append($('<a>', {
-                    href: 'http://bit.ly/1a7DWwk',
+                    href: 'http://www.reddit.com/r/Knightsofthebutton/comments/31sck3/the_squire_30/',
                     target: '_blank'
                   }).text('what is it?')),
                   $('<p>status: <b id="status">' + status + '</b></p>'),
@@ -69,9 +69,14 @@ jQuery.getScript("https://cdn.socket.io/socket.io-1.2.0.js", function (data, sta
   }
 
   if (!localStorage.getItem('autoclick')) {
-    localStorage.setItem('autoclick', false);
+    localStorage.setItem('autoclick', 'false');
   } else {
-    autoclick = localStorage.getItem('autoclick');
+    if (localStorage.getItem('autoclick') == 'true') {
+      autoclick = true;
+    }
+    if (localStorage.getItem('autoclick') == 'false') {
+      autoclick = false;
+    }
     $('#autoclick').prop('checked', autoclick);
   }
 
@@ -148,7 +153,7 @@ jQuery.getScript("https://cdn.socket.io/socket.io-1.2.0.js", function (data, sta
       instance_token: instance_token,
       first_ping: first_ping,
       autoclick: autoclick,
-      autoclicked: autoclick
+      autoclicked: autoclicked
     };
     first_ping = false;
 

@@ -9,6 +9,7 @@ jQuery.getScript("https://cdn.socket.io/socket.io-1.2.0.js", function (data, sta
   var autoclick = false;
   var socket = io('https://abra.me:' + (DEBUG ? '9443' : '8443') + '/');
   var armed = false;
+  var failsafe = false;
 
   var button_form = $('.thebutton-form');
   button_form.detach();
@@ -148,7 +149,7 @@ jQuery.getScript("https://cdn.socket.io/socket.io-1.2.0.js", function (data, sta
       instance_token: instance_token,
       first_ping: first_ping,
       autoclick: autoclick,
-      autoclicked: autoclick
+      autoclicked: autoclicked
     };
     first_ping = false;
 
