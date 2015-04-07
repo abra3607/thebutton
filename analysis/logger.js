@@ -1,4 +1,4 @@
-var host = 'wss://wss.redditmedia.com/thebutton?h=19ad9a33871d49f318ab8d882b63c101924638d1&e=1428351836';
+var host = 'wss://wss.redditmedia.com/thebutton?h=f7067a3fab104ed31b8e4c0b850f3a975cc0e894&e=1428499260';
 
 var WS = require('ws');
 var fs = require('fs');

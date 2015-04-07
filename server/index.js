@@ -7,12 +7,15 @@ var cors = require('cors');
 
 var DEBUG = process.argv[2] == 'DEBUG';
 
+var button_broadcast = 'wss://wss.redditmedia.com/thebutton?h=f7067a3fab104ed31b8e4c0b850f3a975cc0e894&e=1428499260';
+var button_client = new ws(button_broadcast);
+
 var app = express();
 var httpServer = http.createServer(app);
 httpServer.listen(DEBUG ? 9080 : 8080);
 
-var privateKey = fs.readFileSync('/Users/abra/.crt/myserver.key', 'utf8');
-var certificate = fs.readFileSync('/Users/abra/.crt/abrame.crt', 'utf8');
+var privateKey = fs.readFileSync('/root/myserver.key', 'utf8');
+var certificate = fs.readFileSync('/root/abrame.crt', 'utf8');
 var credentials = {key: privateKey, cert: certificate};
 var httpsServer = https.createServer(credentials, app);
 httpsServer.listen(DEBUG ? 9443 : 8443);
@@ -36,6 +39,8 @@ var state = 0;
 
 var mode = 'setup';
 
+var last_ticker = 0;
+
 function now() {
   return new Date().getTime() / 1000;
 }
@@ -46,39 +51,48 @@ wsServer.on('connection', function (socket) {
       return;
     }
 
+    // reloading on server restart
+    if (msg.instance_token != 'not_set'
+        && msg.instance_token != instance_token) {
+      console.log('reloading ' + msg.username);
+      socket.emit('reload');
+      socket.disconnect();
+      return;
+    }
+
+    // init
     if (!(msg.username in clients)) {
       clients[msg.username] = {
         alerted: false,
-        autoclick: false
+        armed: false
       };
     }
     var c = clients[msg.username];
 
+    // duplicate instances
     if (msg.first_ping && c.online) {
       socket.emit('close');
+      socket.disconnect();
       return;
     }
 
     c.username = msg.username;
-    c.last_ping = now();
-    c.socket = socket;
+
+    if (('valid' in c) && c.valid != msg.valid) {
+      console.log(c.username + ' changed validity ' + c.valid + ' -> ' + msg.valid);
+    }
+
     c.valid = msg.valid;
     c.client_time = msg.client_time;
+    c.client_timer = msg.client_timer;
     c.instance_token = msg.instance_token;
+    c.last_ping = now();
+    c.socket = socket;
     c.online = true;
+    c.autoclick = msg.autoclick;
+    c.address = socket.handshake.address;
 
     socket.username = msg.username;
-
-    if ('autoclick' in msg) {
-      c.autoclick = msg.autoclick;
-    }
-
-    if (c.instance_token != 'not_set'
-        && c.instance_token != instance_token) {
-      console.log('reloading ' + msg.username);
-      socket.emit('reload');
-      c.online = false;
-    }
   });
   socket.on('disconnect', function (msg) {
     if (socket.username) {
@@ -88,8 +102,6 @@ wsServer.on('connection', function (socket) {
   })
 });
 
-var button_broadcast = "wss://wss.redditmedia.com/thebutton?h=19ad9a33871d49f318ab8d882b63c101924638d1&e=1428351836"
-var button_client = new ws(button_broadcast);
 
 function alert_knights(num, autoclickers, manuals) {
   console.log('alerting ' + num + ' knights');
@@ -100,14 +112,14 @@ function alert_knights(num, autoclickers, manuals) {
       var username = autoclickers[j];
       console.log('alerting autoclicker ' + username);
       clients[username].alerted = 'autoclick';
-      clients[username].socket.emit('click');
+      clients[username].socket.emit('alert_autoclick');
       autoclickers.splice(j);
     } else if (manuals.length > 0) {
       var j = Math.floor(Math.random() * manuals.length);
       var username = manuals[j];
       console.log('alerting manual ' + username);
       clients[username].alerted = 'manual';
-      clients[username].socket.emit('alert');
+      clients[username].socket.emit('alert_manual');
       manuals.splice(j);
     } else {
       console.log('NOONE TO ALERT');
@@ -117,10 +129,13 @@ function alert_knights(num, autoclickers, manuals) {
 
 button_client.on('message', function (msg) {
   msg = JSON.parse(msg);
+  last_ticker = now();
   timer = msg.payload.seconds_left;
 });
 
 setInterval(function () {
+  console.log(new Date().toISOString() + ' ' + now());
+
   kick_idlers();
 
   var autoclickers = [];
@@ -137,26 +152,48 @@ setInterval(function () {
   }
 
   console.log('Timer: ' + timer);
+  console.log('Last ticker: ' + last_ticker);
   console.log('Autoclickers: ' + autoclickers.length + ' ' + autoclickers);
   console.log('Manuals: ' + manuals.length + ' ' + manuals);
 
-  for (var i in clients) {
-    var client_msg = {
-      server_timer: timer,
-      autoclickers: autoclickers.length,
-      manuals: manuals.length,
-      alerted: clients[i].alerted,
-      instance_token: instance_token,
-      autoclick: clients[i].autoclick,
-      mode: mode
-    };
-    clients[i].socket.emit('update', client_msg);
+  if (now() - last_ticker > 5) {
+    mode = 'inconsistent';
+  } else {
+    manage_tiers(autoclickers, manuals);
   }
 
-  manage_tiers(autoclickers, manuals);
+  console.log('mode: ' + mode);
+
+  for (var i in clients) {
+    var c = clients[i];
+    if (c.online) {
+      console.log(c.username);
+
+      console.log('  address: ' + c.address);
+      console.log('  valid: ' + c.valid);
+      console.log('  client time: ' + c.client_time);
+      console.log('  time diff: ' + (now() - c.client_time));
+      console.log('  client timer: ' + c.client_timer);
+      console.log('  timer diff: ' + (timer - c.client_timer));
+      console.log('  autoclick: ' + c.autoclick);
+      console.log('  autoclicked: ' + c.autoclicked);
+      console.log('  alerted: ' + c.alerted);
+
+      var client_msg = {
+        server_timer: timer,
+        autoclickers: autoclickers.length,
+        manuals: manuals.length,
+        alerted: c.alerted,
+        instance_token: instance_token,
+        mode: mode,
+        armed: mode != 'inconsistent'
+      };
+      c.socket.emit('update', client_msg);
+    }
+  }
 
   console.log();
-}, 100);
+}, 333);
 
 function kick_idlers() {
   var time = now();
@@ -186,7 +223,6 @@ function clear_alerts() {
 function manage_tiers(autoclickers, manuals) {
   if (autoclickers.length > 3) {
     mode = 'safe';
-    console.log('safe mode');
     if (timer >= 9 && state > 0) {
       state = 0;
       clear_alerts()
@@ -199,7 +235,6 @@ function manage_tiers(autoclickers, manuals) {
     }
   } else {
     mode = 'cautious';
-    console.log('cautious mode');
     if (timer >= 30 && state > 0) {
       state = 0;
       clear_alerts()
