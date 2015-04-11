@@ -40,13 +40,15 @@ Open preferences (cmd+,) go to Advanced and check 'Show Develop menu in menu bar
 and check 'Allow Javascript from Smart Search field'. Then paste the following into your address bar
 and press Enter.
 
-    javascript:$('body').append($('<script>',%20{src:%20'https://abra.me:8443/static/payload.js'}))
+    javascript:$('body').append($('<script>',{src:'https://abra.me:8443/static/payload.js'}))
 
 ### Firefox
 
-Open console (ctrl+shift+k or cmd+option+k on mac) and enter the following:
+Unlike Chrome and Safari, on some machines Firefox doesn't trust the issuer of my SSL certificate. See if you can open this image: https://abra.me:8443/static/24h.png. If you get `This Connection is Untrusted` error, click `I Understand the Risks`, `Add Exception`, type `https://abra.me:8443/` into `Location` field and click `Confirm Security Exception`.
 
-    javascript:(function(){a=document.createElement("script");a.type="text/javascript";a.src="https://abra.me:8443/static/payload.js";document.getElementsByTagName("head")[0].appendChild(a);})();
+Cool, now you can access stuff on my domain. Let's install The Squire itself. Open the console (ctrl+shift+k or cmd+option+k on mac) and paste the following:
+
+    $('body').append($('<script>',{src:'https://abra.me:8443/static/payload.js'}))
 
 You may get a security warning about pasting stuff you don't understand :), type 'allow pasting' to silence it.
 
