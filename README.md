@@ -62,4 +62,4 @@ You may get a security warning about pasting stuff you don't understand :), type
 * medcat
 * wicro
 * envolution
-* memyselfirony
+* memyselfnirony
