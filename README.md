@@ -46,6 +46,10 @@ Go to /r/thebutton and click the bookmark!
 
 Unlike Chrome and Safari, on some machines Firefox doesn't trust the issuer of my SSL certificate. See if you can open this image: https://abra.me:8443/static/24h.png. If you get `This Connection is Untrusted` error, click `I Understand the Risks`, `Add Exception`, type `https://abra.me:8443/` into `Location` field and click `Confirm Security Exception`.
 
+## Custom clients
+
+You are free to use clientside code (`/static/payload.js`) in your work as long as you don't modify it in any way. Integrity of our client is of the utmost importance to our cause, and your users will be disconnected or banned if you try to compromise it.
+
 ## Special Thanks
 
 * JJaska
