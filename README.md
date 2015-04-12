@@ -50,6 +50,8 @@ Unlike Chrome and Safari, on some machines Firefox doesn't trust the issuer of m
 
 You are free to use clientside code (`/static/payload.js`) in your work as long as you don't modify it in any way. Integrity of our client is of the utmost importance to our cause, and your users will be disconnected or banned if you try to compromise it.
 
+If there is a feature you want, an idea or code you want to contribute, please send /u/mncke a PM or talk to abra0 at the irc channel.
+
 ## Special Thanks
 
 * JJaska
