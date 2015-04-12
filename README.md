@@ -34,23 +34,17 @@ the inevitable.
 
 ## Other browsers
 
-###Safari
+### Bookmark
 
-Open preferences (cmd+,) go to Advanced and check 'Show Develop menu in menu bar'. Go to Develop menu
-and check 'Allow Javascript from Smart Search field'. Then paste the following into your address bar
-and press Enter.
+Create a bookmark with the following content:
 
-    javascript:$('body').append($('<script>',{src:'https://abra.me:8443/static/payload.js'}))
+		javascript:((function(){$.getScript("https://abra.me:8443/static/payload.js");})())
 
-### Firefox
+Go to /r/thebutton and click the bookmark!
+
+#### Firefox users
 
 Unlike Chrome and Safari, on some machines Firefox doesn't trust the issuer of my SSL certificate. See if you can open this image: https://abra.me:8443/static/24h.png. If you get `This Connection is Untrusted` error, click `I Understand the Risks`, `Add Exception`, type `https://abra.me:8443/` into `Location` field and click `Confirm Security Exception`.
-
-Cool, now you can access stuff on my domain. Let's install The Squire itself. Open the console (ctrl+shift+k or cmd+option+k on mac) and paste the following:
-
-    $('body').append($('<script>',{src:'https://abra.me:8443/static/payload.js'}))
-
-You may get a security warning about pasting stuff you don't understand :), type 'allow pasting' to silence it.
 
 ## Special Thanks
 
@@ -63,3 +57,4 @@ You may get a security warning about pasting stuff you don't understand :), type
 * wicro
 * envolution
 * memyselfnirony
+* debugmonkey
