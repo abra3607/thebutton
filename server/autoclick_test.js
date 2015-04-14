@@ -26,14 +26,24 @@ setInterval(function () {
     n += 1;
   }
 
-  console.log(log.length);
-  console.log(JSON.stringify(log[n - 1]));
   var diff = nowTime - tickTime;
-  console.log(diff);
 
-  if (!clicked && n > 10 && log[n - 1].seconds == 50 && diff < 0.1) {
+  console.log(diff);
+  var s = '' + n + ': ';
+  for (var i = n - 1; i >= 0; i--) {
+    s += '' + log[i].seconds + ' ';
+  }
+  console.log(s);
+
+  var a = log[n - 1];
+  var b = log[n - 11];
+
+  if (!clicked && n > 30 && diff < 0.1 && a.seconds != b.seconds) {
+    console.log('CLICK');
+    console.log('now is ' + JSON.stringify(a));
+    console.log('click as ' + JSON.stringify(b));
     clicked = true;
-    $.request("press_button", log[n - 4], function (e) {
+    $.request("press_button", b, function (e) {
       console.log(e);
     });
     alert('click!');
